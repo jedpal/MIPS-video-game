@@ -24,9 +24,10 @@ move_player_left:
 	beq	s0, zero, move_player_right
 	la	s1, player_location_array
 	lw	s2, (s1)
-	subi	s4, s2, 1
+	#subi	s4, s2, 1
 	lw	s3, 4(s1)
-	move	a0, s4
+	move	a0, s2
+	subi	a0, a0, 1
 	move	a1, s3
 	jal	check_platform
 	bne	v0, zero, move_player_exit
@@ -37,7 +38,12 @@ move_player_right:
 	lw	s0, right_pressed
 	beq	s0, zero, move_player_exit
 	la	s1, player_location_array
-	lw	s2, (s1)
+	lw	s2, (s1)	#x coordinate
+	move	a0, s2
+	addi	a0, a0, 5
+	lw	a1, 4(s1)	#y coordinate in a1
+	jal	check_platform
+	bne	v0, zero, move_player_exit
 	li	s3, BOARD_WIDTH
 	subi	s4, s3, BOARD_OFFSET
 	subi	s4, s4, SPRITE_WIDTH

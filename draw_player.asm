@@ -20,7 +20,7 @@ draw_player:
 	addi	t0, t0, 4
 	lw	a1, (t0)
 	la	a2, player_img 
-	jal	display_blit_5x5
+	jal	display_blit_5x5_trans
 	jal	display_update_and_clear
 draw_player_exit:
 	pop	ra

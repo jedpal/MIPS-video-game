@@ -62,7 +62,7 @@ _game_loop:
 _game_over:
 	exit
 
-
+.globl display_lives
 display_lives:
 	push	ra
 	push	s0 
@@ -76,7 +76,7 @@ display_lives_loop:
 	move	a0, s0
 	li	a1, 58
 	la	a2, player_img
-	jal	display_blit_5x5
+	jal	display_blit_5x5_trans
 	inc	s1
 	addi	s0, s0, -6
 	j	display_lives_loop
@@ -90,7 +90,7 @@ display_lives_exit:
 # call once per main loop to keep the game running at 60FPS.
 # if your code is too slow (longer than 16ms per frame), the framerate will drop.
 # otherwise, this will account for different lengths of processing per frame.
-
+.globl wait_for_next_frame
 wait_for_next_frame:
 	enter	s0
 	lw	s0, last_frame_time

@@ -3,6 +3,8 @@
 
 .globl player_location_array
 
+.eqv	JUMP_HEIGHT	10
+
 .data
 player_location_array:  
 		       .word 4
@@ -62,7 +64,6 @@ move_player_up:
 	jal	check_platform
 	move	s3, v0		#left side bottom
 	addi	a0, s1, 4
-	#move	a0, s1
 	move	a1, s2
 	addi	a1, a1, 5
 	jal	check_platform
@@ -70,24 +71,44 @@ move_player_up:
 	bne	s3, zero, jump
 	bne	s4, zero, jump
 	j	move_player_down
-jump:
+jump:				#CHECK FOR UPPER OUT OF BOUNDS
 	lw	s1, (s0)	#x coordinate
 	lw	s2, 4(s0)	#y coordinate
+	
+	
+	li	s5, 0
+jump_loop:
+
 	move	a0, s1
 	move	a1, s2
 	subi	a1, a1, 1
 	jal	check_platform
 	move	s3, v0		#left side top	
 	addi	a0, s1, 4
-	#move	a0, s1
 	move	a1, s2
 	subi	a1, a1, 1
 	jal	check_platform
 	move	s4, v0		#right side top
 	bne	s3, zero, move_player_down
 	bne	s4, zero, move_player_down
+
+	li	t0, JUMP_HEIGHT
+	bge	s5, t0, move_player_down
+	ble	s2, zero, move_player_down
 	subi	s2, s2, 1
-	sw	s2, 4(s0)	 
+	
+	sw	s2, 4(s0)
+	#lw	a0, (s0)
+	#lw	a1, 4(s0)
+	#la	a2, player_img
+	#jal	display_blit_5x5_trans
+	jal	display_lives
+	jal	draw_platform
+	jal	draw_player
+	jal	display_update_and_clear
+	jal	wait_for_next_frame
+	inc	s5
+	j	jump_loop
 move_player_down:
 	la	s0, player_location_array
 	lw	s1, (s0)	#x coordinate

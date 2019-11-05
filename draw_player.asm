@@ -5,11 +5,11 @@
 
 .data
 player_img:       .byte
-    		0  0  7  0  0
+    	    0xFF 0xFF 7 0xFF 0xFF
 		7  7  4  7  7
-		0  4  4  4  0
-		0  7  7  7  0
-		0  7  0  7  0
+	    0xFF   4  4  4  0xFF
+	    0xFF   7  7  7  0xFF
+	    0xFF   7 0xFF 7 0xFF
 .text
 
 .globl draw_player

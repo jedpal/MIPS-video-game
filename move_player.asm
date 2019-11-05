@@ -4,7 +4,7 @@
 .globl player_location_array
 .globl direction
 
-.eqv	JUMP_HEIGHT	12
+.eqv	JUMP_HEIGHT	15
 
 .data
 player_location_array:  
@@ -39,7 +39,16 @@ move_player_left:
 	subi	a0, a0, 1
 	move	a1, s3
 	jal	check_platform
+	move	s5, v0
+	
+	lw	a0, (s1)	#x coordinate
+	#move	a0, s2
+	subi	a0, a0, 1
+	lw	a1, 4(s1)
+	addi	a1, a1, 4	#bottom left
+	jal	check_platform
 	bne	v0, zero, move_player_right
+	bne	s5, zero, move_player_right
 	ble	s2, BOARD_OFFSET, move_player_right
 	subi	s2, s2, 1
 	sw	s2, (s1)
@@ -57,7 +66,16 @@ move_player_right:
 	addi	a0, a0, 5
 	lw	a1, 4(s1)	#y coordinate in a1
 	jal	check_platform
+	move	s5, v0
+	
+	lw	a0, (s1)	#x coordinate
+	#move	a0, s2
+	addi	a0, a0, 5
+	lw	a1, 4(s1)
+	addi	a1, a1, 4	#bottom right
+	jal	check_platform
 	bne	v0, zero, move_player_up
+	bne	s5, zero, move_player_up
 	li	s3, BOARD_WIDTH
 	subi	s4, s3, BOARD_OFFSET
 	subi	s4, s4, SPRITE_WIDTH

@@ -2,13 +2,15 @@
 .include "game_settings.asm"
 
 .globl player_location_array
+.globl direction
 
-.eqv	JUMP_HEIGHT	10
+.eqv	JUMP_HEIGHT	12
 
 .data
 player_location_array:  
-		       .word 4
-		       .word 1
+		       .word 30
+		       .word 45
+direction:	.word 0
 #30, 45
 .text
 .globl move_player
@@ -24,6 +26,11 @@ move_player:
 move_player_left:
 	lw	s0, left_pressed
 	beq	s0, zero, move_player_right
+	
+	la	t6, direction
+	li	t7, 0		#direction for projectile
+	sw	t7, (t6)
+	
 	la	s1, player_location_array
 	lw	s2, (s1)
 	#subi	s4, s2, 1
@@ -39,6 +46,11 @@ move_player_left:
 move_player_right:
 	lw	s0, right_pressed
 	beq	s0, zero, move_player_up
+	
+	la	t6, direction
+	li	t7, 1		#direction for projectile
+	sw	t7, (t6)
+	
 	la	s1, player_location_array
 	lw	s2, (s1)	#x coordinate
 	move	a0, s2

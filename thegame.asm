@@ -52,6 +52,7 @@ _game_loop:
 	jal	display_lives
 	jal	draw_platform
 	jal	draw_player
+	jal	shoot
 	
 	jal	display_update_and_clear
 

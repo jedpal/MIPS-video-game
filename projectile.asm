@@ -2,11 +2,13 @@
 .include "game_settings.asm"
 
 .globl projectile_coords
+.globl projectile_activated
 
 .data
 projectile_coords:
 			.word 0
 			.word 0
+projectile_activated:	.word 0
 
 .text
 .globl shoot
@@ -28,10 +30,14 @@ shoot:
 	addi	s2, s2, 1			#positioning projectile at hand
 	sw	s2, 4(s4)
 	lw	t0, direction
-	beq	t0, zero, shoot_left_loop
+	beq	t0, zero, shoot_left
 	bne	t0, zero, shoot_right
 	#check if block in front
 shoot_right:
+	la	t5, projectile_activated
+	li	t4, 1
+	sw	t4, (t5)
+	
 	addi	s1, s1, 4
 shoot_right_loop:
 	move	a0, s1
@@ -55,6 +61,11 @@ shoot_right_loop:
 	addi	s1, s1, 2
 	sw	s1, (s4)
 	j	shoot_right_loop
+shoot_left:
+	la	t5, projectile_activated
+	li	t4, 1
+	sw	t4, (t5)
+
 shoot_left_loop:
 	move	a0, s1
 	move	a1, s2
@@ -78,6 +89,10 @@ shoot_left_loop:
 	sw	s1, (s4)
 	j	shoot_left_loop
 shoot_exit:
+	la	t5, projectile_activated
+	li	t4, 0
+	sw	t4, (t5)
+	
 	pop	s3
 	pop	s2
 	pop	s1

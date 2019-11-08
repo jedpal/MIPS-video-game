@@ -8,6 +8,7 @@
 #	Defines the number of frames per second: 16ms -> 60fps
 .eqv	GAME_TICK_MS		16
 #.eqv	LIVES			3
+.globl	lives
 
 .data
 # don't get rid of these, they're used by wait_for_next_frame.
@@ -17,7 +18,8 @@ frame_counter:    .word 0
 space:		   .asciiz " "
 comma:		   .asciiz ","
 lives:		   .word 3
-
+game_over_text:    .asciiz "Game Over"
+score_text:	   .asciiz "Score:"
 
 
 .text
@@ -36,7 +38,7 @@ game:
 _game_wait:
 	jal	input_get_keys
 	beqz	v0, _game_wait
-
+	
 _game_loop:
 	# check for input,
 	jal     handle_input
@@ -60,7 +62,22 @@ _game_loop:
 	jal	wait_for_next_frame
 	b	_game_loop
 
+.globl _game_over
 _game_over:
+	li	a0, 1
+	li	a1, 1
+	la	a2, game_over_text
+	jal	display_draw_text
+	li	a0, 1
+	li	a1, 11
+	la	a2, score_text
+	jal	display_draw_text
+	li	a0, 30
+	li	a1, 30
+	lw	a2, score
+	jal	display_draw_int
+	
+	jal	display_update_and_clear
 	exit
 
 .globl display_lives

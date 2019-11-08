@@ -2,8 +2,10 @@
 .include "game_settings.asm"
 
 .eqv ENEMIES 5
+.globl score
 
 .data
+score:		.word 0
 enemy_array:	#activated, direction, x coord, y coord
 		.word 1, 0, 25, 5, 1, 1, 30, 5, 1, 0, 20, 35, 1, 1, 15, 45, 1, 0, 25, 45
 		
@@ -37,11 +39,12 @@ move_enemy_loop:
 	mul	t4, s2, 16
 	add	s1, t4, s0	#activated address
 #check if hit by projectile
+projectile_hit:
 	lw	t5, (s1)
-	beq	t5, zero, check_active_enemy
+	beq	t5, zero, player_hit
 	la	t5, projectile_activated
 	lw	t6, (t5)	
-	beq	t6, zero, check_active_enemy
+	beq	t6, zero, player_hit
 	la	t0, projectile_coords
 	lw	t1, 8(s1)	#enemy x
 	lw	t2, 12(s1)	#enemy y
@@ -49,14 +52,45 @@ move_enemy_loop:
 	lw	t4, 4(t0)	#projectile y
 	sub	t3, t3, t1
 	sub	t4, t4, t2
-	bge	t3, 5, check_active_enemy	#only pass if within 5 x and y coords
-	blt	t3, zero, check_active_enemy
-	bge	t4, 5, check_active_enemy
-	blt	t4, zero, check_active_enemy
+	bge	t3, 5, player_hit	#only pass if within 5 x and y coords
+	blt	t3, zero, player_hit
+	bge	t4, 5, player_hit
+	blt	t4, zero, player_hit
 	la	t5, projectile_activated
 	li	t6, 0
-	sw	t6, (t5)
+	sw	t6, (t5)		#deactivating projectile
 	sw	t6, (s1)
+	la	t5, score
+	lw	t6, (t5)
+	addi	t6, t6, 1		#adding score
+	sw	t6, (t5)
+	li	t7, ENEMIES
+	bge	t6, t7, _game_over
+player_hit:
+	lw	t5, (s1)
+	beq	t5, zero, check_active_enemy
+	la	t5, hurt
+	lw	t6, (t5)	
+	bne	t6, zero, check_active_enemy
+	la	t0, player_location_array
+	lw	t1, 8(s1)	#enemy x
+	lw	t2, 12(s1)	#enemy y
+	lw	t3, (t0)	#player x
+	lw	t4, 4(t0)	#player y
+	sub	t3, t3, t1
+	sub	t4, t4, t2
+	bge	t3, 10, check_active_enemy	#only pass if within 10 x and y coords
+	ble	t3, -5, check_active_enemy
+	bge	t4, 10, check_active_enemy
+	ble	t4, -5, check_active_enemy
+	la	t5, hurt
+	li	t6, 1
+	sw	t6, (t5)
+	la	t5, lives
+	lw	t6, (t5)
+	subi	t6, t6, 1
+	sw	t6, (t5)
+	blt	t6, zero, _game_over
 #continuing checking if active
 check_active_enemy:
 	lw	t5, (s1)	#activated value

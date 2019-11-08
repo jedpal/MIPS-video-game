@@ -7,9 +7,10 @@
 .eqv	JUMP_HEIGHT	15
 
 .data
+mid_jump:		.word 0
 player_location_array:  
-		       .word 30
-		       .word 45
+		       .word 12
+		       .word 15
 direction:	.word 0
 #30, 45
 .text
@@ -83,8 +84,17 @@ move_player_right:
 	addi	s2, s2, 1
 	sw	s2, (s1)
 move_player_up:
+	la	t2, mid_jump
+	lw	t3, (t2)	#checking if mid jump
+	bne	t3, zero, jump_loop
+	
 	lw	s0, up_pressed
 	beq	s0, zero, move_player_down
+	
+	la	t0, mid_jump
+	li	t1, 1		#marking that player is mid jump
+	sw	t1, (t0)
+	
 	la	s0, player_location_array
 	lw	s1, (s0)	#x coordinate
 	lw	s2, 4(s0)	#y coordinate
@@ -108,6 +118,9 @@ jump:				#CHECK FOR UPPER OUT OF BOUNDS
 	
 	li	s5, 0
 jump_loop:
+	la	s0, player_location_array
+	lw	s1, (s0)	#x coordinate
+	lw	s2, 4(s0)
 
 	move	a0, s1
 	move	a1, s2
@@ -132,14 +145,17 @@ jump_loop:
 	#lw	a1, 4(s0)
 	#la	a2, player_img
 	#jal	display_blit_5x5_trans
-	jal	display_lives
-	jal	draw_platform
-	jal	draw_player
-	jal	display_update_and_clear
-	jal	wait_for_next_frame
+	#jal	display_lives
+	#jal	draw_platform
+	#jal	draw_player
+	#jal	display_update_and_clear
+	#jal	wait_for_next_frame
 	inc	s5
-	j	jump_loop
+	j	move_player_exit
 move_player_down:
+	la	t0, mid_jump
+	li	t1, 0
+	sw	t1, (t0)
 	la	s0, player_location_array
 	lw	s1, (s0)	#x coordinate
 	lw	s2, 4(s0)	#y coordinate

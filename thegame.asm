@@ -18,12 +18,7 @@ space:		   .asciiz " "
 comma:		   .asciiz ","
 lives:		   .word 3
 
-enemy_img:       .byte
-    		0  0  7  0  0
-		7  7  3  7  7
-		0  3  3  3  0
-		0  7  7  7  0
-		0  7  0  7  0
+
 
 .text
 # --------------------------------------------------------------------------------------------------
@@ -35,6 +30,7 @@ game:
 	jal	display_lives
 	jal	draw_platform
 	jal	draw_player
+	jal	draw_enemies
 	
 	# Wait for a key input
 _game_wait:
@@ -47,12 +43,16 @@ _game_loop:
 	
 	# update everything,
 	jal	move_player
+	jal	move_enemy
+	jal	shoot
 	
 	# draw everything
 	jal	display_lives
 	jal	draw_platform
 	jal	draw_player
-	jal	shoot
+	jal	draw_shoot
+	#jal	move_enemy
+	jal	draw_enemies
 	
 	jal	display_update_and_clear
 

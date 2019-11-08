@@ -21,7 +21,7 @@ draw_player:
 	lw	a1, (t0)
 	la	a2, player_img 
 	jal	display_blit_5x5_trans
-	jal	display_update_and_clear
+	#jal	display_update_and_clear
 draw_player_exit:
 	pop	ra
 	jr	ra
